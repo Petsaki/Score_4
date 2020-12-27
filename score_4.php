@@ -9,6 +9,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $request = explode('/',trim($_SERVER['PATH_INFO'],'/'));
 $input = json_decode(file_get_contents('php://input'),true);
 
+//Ολα τα πιθανα requests και αναλογα ποιο είναι, καλεί και την αντίστοιχη function
 switch ($r=array_shift($request)){
 	case 'board':
 		switch($b=array_shift($request)){
@@ -39,6 +40,7 @@ switch ($r=array_shift($request)){
 		exit;
 }
 
+//Βλεπει εάν  η method είναι get ή post
 function handle_board($method,$input){
 	if($method=='GET'){
 		show_board($input);

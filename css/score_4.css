@@ -1,0 +1,4 @@
+#score_table TD {width: 3em; height:3em;border:1px solid black;text-align:center;}
+#score_table {border-collapse: collapse;}
+TD.Y_cycle {background-color:#F7CA18;}
+TD.R_cycle {background-color:#CF000F;}

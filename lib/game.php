@@ -1,5 +1,7 @@
 <?php
 
+
+//Δειχνει την κατασταση του παιχνιδιου
 function show_status() {
 	
 	global $mysqli;

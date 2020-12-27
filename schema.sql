@@ -23,7 +23,7 @@ SET time_zone = "+00:00";
 
 DELIMITER $$
 --
--- Procedures
+-- Procedures: Αρχικοποιω την board μέσ replace με την board_empty
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_board` ()  BEGIN
 		REPLACE INTO `board` SELECT * FROM `board_empty`;
@@ -34,7 +34,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `board`
+-- Φτιάχνω τον board
 --
 
 CREATE TABLE `board` (
@@ -46,7 +46,7 @@ CREATE TABLE `board` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `board_empty`
+-- Φτιάχνω τον board_empty
 --
 
 CREATE TABLE `board_empty` (
@@ -56,7 +56,7 @@ CREATE TABLE `board_empty` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `board_empty`
+-- Γεμιζω την board_empty με τα αρχικα δεδομενα
 --
 
 INSERT INTO `board_empty` (`x`, `y`, `color`) VALUES
@@ -106,7 +106,7 @@ INSERT INTO `board_empty` (`x`, `y`, `color`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `game_status`
+-- Φτιάχνω τον game_status
 --
 
 CREATE TABLE `game_status` (
@@ -124,7 +124,7 @@ INSERT INTO `game_status` (`status`, `color_turn`, `result`, `last_change`) VALU
 ('not active', 'Y', NULL, '2020-12-26 21:39:41');
 
 --
--- Triggers `game_status`
+-- Triggers: Καθε φορα που γινετε update στην `game_status` βαζει στο last_change την ημερομηνια εκεινης της στιγμης
 --
 DELIMITER $$
 CREATE TRIGGER `game_status_update` BEFORE UPDATE ON `game_status` FOR EACH ROW BEGIN
@@ -149,19 +149,19 @@ CREATE TABLE `players` (
 --
 
 --
--- Indexes for table `board`
+-- Primary keys για τον board
 --
 ALTER TABLE `board`
   ADD PRIMARY KEY (`x`,`y`);
 
 --
--- Indexes for table `board_empty`
+-- Primary keys για τον `board_empty`
 --
 ALTER TABLE `board_empty`
   ADD PRIMARY KEY (`x`,`y`);
 
 --
--- Indexes for table `players`
+-- Primary keys για `players`
 --
 ALTER TABLE `players`
   ADD PRIMARY KEY (`color_picked`);
