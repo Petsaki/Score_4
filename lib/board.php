@@ -1,7 +1,7 @@
 <?php
 
 //Δειχνει τον πινακα απο την βαση
-function show_board($input) {
+function show_board() {
 	global $mysqli;
 	
 	$sql = 'select * from board';

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 26, 2020 at 11:33 PM
+-- Generation Time: Dec 28, 2020 at 11:51 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.10
 
@@ -23,7 +23,7 @@ SET time_zone = "+00:00";
 
 DELIMITER $$
 --
--- Procedures: Αρχικοποιω την board μέσ replace με την board_empty
+-- Procedures: Αρχικοποιω την board μέσο της replace με την board_empty
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_board` ()  BEGIN
 		REPLACE INTO `board` SELECT * FROM `board_empty`;
@@ -42,6 +42,54 @@ CREATE TABLE `board` (
   `y` tinyint(1) NOT NULL,
   `color` enum('Y','R') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `board`
+--
+
+INSERT INTO `board` (`x`, `y`, `color`) VALUES
+(1, 1, 'R'),
+(1, 2, NULL),
+(1, 3, NULL),
+(1, 4, 'R'),
+(1, 5, 'Y'),
+(1, 6, NULL),
+(1, 7, NULL),
+(2, 1, NULL),
+(2, 2, NULL),
+(2, 3, NULL),
+(2, 4, NULL),
+(2, 5, NULL),
+(2, 6, NULL),
+(2, 7, NULL),
+(3, 1, NULL),
+(3, 2, NULL),
+(3, 3, NULL),
+(3, 4, NULL),
+(3, 5, NULL),
+(3, 6, NULL),
+(3, 7, NULL),
+(4, 1, NULL),
+(4, 2, NULL),
+(4, 3, NULL),
+(4, 4, NULL),
+(4, 5, NULL),
+(4, 6, NULL),
+(4, 7, NULL),
+(5, 1, NULL),
+(5, 2, NULL),
+(5, 3, NULL),
+(5, 4, NULL),
+(5, 5, NULL),
+(5, 6, NULL),
+(5, 7, NULL),
+(6, 1, NULL),
+(6, 2, NULL),
+(6, 3, NULL),
+(6, 4, NULL),
+(6, 5, NULL),
+(6, 6, NULL),
+(6, 7, NULL);
 
 -- --------------------------------------------------------
 
@@ -121,7 +169,7 @@ CREATE TABLE `game_status` (
 --
 
 INSERT INTO `game_status` (`status`, `color_turn`, `result`, `last_change`) VALUES
-('not active', 'Y', NULL, '2020-12-26 21:39:41');
+('not active', NULL, NULL, NULL);
 
 --
 -- Triggers: Καθε φορα που γινετε update στην `game_status` βαζει στο last_change την ημερομηνια εκεινης της στιγμης
@@ -136,32 +184,42 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `players`
+-- Φτιάχνω τον πίνακα players
 --
 
 CREATE TABLE `players` (
   `username` varchar(50) DEFAULT NULL,
-  `color_picked` enum('Y','R') NOT NULL
+  `color_picked` enum('Y','R') NOT NULL,
+  `token` varchar(100) NOT NULL,
+  `last_action` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `players`
+--
+
+INSERT INTO `players` (`username`, `color_picked`, `token`, `last_action`) VALUES
+(NULL, 'Y', '', NULL),
+(NULL, 'R', '', NULL);
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Primary keys για τον board
+-- Indexes for table `board`
 --
 ALTER TABLE `board`
   ADD PRIMARY KEY (`x`,`y`);
 
 --
--- Primary keys για τον `board_empty`
+-- Indexes for table `board_empty`
 --
 ALTER TABLE `board_empty`
   ADD PRIMARY KEY (`x`,`y`);
 
 --
--- Primary keys για `players`
+-- Indexes for table `players`
 --
 ALTER TABLE `players`
   ADD PRIMARY KEY (`color_picked`);

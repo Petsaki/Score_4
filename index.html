@@ -16,9 +16,26 @@
     <title>Score 4 by Petsaki</title>
 </head>
 <body>
-   <p>SCORE 4</p>
+   <h1>SCORE 4</h1>
    <div id='score_board'>
    </div>
-   <button id='reset_game' class='btn btn-primary'>ΕΝΑΡΞΗ</button>
+   <br/>
+   <div id='game_initializer'>
+		Δώσε username:<input id='username'> 
+		<select id='color_select'>
+		<option value='Y'>Yellow</option>
+		<option value='R'>Red</option>
+		</select>
+		<button id='login' class='btn btn-primary'>ΕΙΣΟΔΟΣ ΣΤΟ ΠΑΙΧΝΙΔΙ</button><br>
+	</div>
+	<div id='game_info'>
+	</div>
+	<br/>
+	<div id='move_div'>
+		Δώσε τις συνταταγμένες του κουτιού(x y):<input id='the_move'>  <button id='do_move' class='btn btn-primary'>ΚΑΝΕ ΤΗΝ ΚΙΝΗΣΗ</button>
+	<br/>
+</div>
+<br/>
+<button id='reset_game' class='btn btn-primary'>ΕΝΑΡΞΗ/RESET</button>
 </body>
 </html>
