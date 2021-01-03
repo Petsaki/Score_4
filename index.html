@@ -16,26 +16,50 @@
     <title>Score 4 by Petsaki</title>
 </head>
 <body>
-   <h1>SCORE 4</h1>
-   <div id='score_board'>
-   </div>
-   <br/>
-   <div id='game_initializer'>
-		Δώσε username:<input id='username'> 
-		<select id='color_select'>
-		<option value='Y'>Yellow</option>
-		<option value='R'>Red</option>
-		</select>
-		<button id='login' class='btn btn-primary'>ΕΙΣΟΔΟΣ ΣΤΟ ΠΑΙΧΝΙΔΙ</button><br>
+	<div class="container">
+
+		<div class="row">
+			<div class="col-md-6" >
+				<h1 class="text-center">SCORE 4</h1>
+			</div>
+			<div class="col-md-4">
+			</div>
+			<div class="col-md-2" style="margin-top:3%" >
+				<label id='test'><input type="checkbox" class="text-center" id="light" onclick="light()"> Light Mode</label>
+			</div>
+		</div>
+
+		<div class="row" style="margin-top:3%">
+			<div class="col-md-6" >
+				<div id='score_board'>
+				</div>
+			</div>
+			<div class="col-md-6" style="margin-top: 3%;">
+				<div id='game_initializer'>
+					<input id='username' placeholder="Username:"> 
+					<select id='color_select'>
+						<option value='Y'>Yellow</option>
+						<option value='R'>Red</option>
+					</select>
+					<button id='login' class='btn btn-primary'>Login</button><br>
+				</div>
+				<div id='game_info'>
+				</div>
+				<br/>
+				<div id='move_div'>
+					Give a number from 1-7 for the column:<input id='the_move'>  <button id='do_move' class='btn btn-primary'>Play</button>
+					<br/>
+				</div>
+				<button id='reset_game' class='btn btn-primary'>RESET</button>
+				<br/>
+				<br/>
+				<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">How to play</button>
+				<div id="demo" class="collapse">
+					Playing against an opponent, you try to be the first to place four 
+					checkers in a row (horizontally,vertically,diagonals) on the game board. While figuring out game winning strategy can sometimes be challenge.
+				</div>
+			</div>
+		</div>
 	</div>
-	<div id='game_info'>
-	</div>
-	<br/>
-	<div id='move_div'>
-		Δώσε τις συνταταγμένες του κουτιού(x y):<input id='the_move'>  <button id='do_move' class='btn btn-primary'>ΚΑΝΕ ΤΗΝ ΚΙΝΗΣΗ</button>
-	<br/>
-</div>
-<br/>
-<button id='reset_game' class='btn btn-primary'>ΕΝΑΡΞΗ/RESET</button>
 </body>
 </html>

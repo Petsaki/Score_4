@@ -1,5 +1,5 @@
 <?php
-//Εδω βάζεις username και password
+//Username και password της βάσης
 $DB_USER='root';
 $DB_PASS='';
 

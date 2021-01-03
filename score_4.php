@@ -5,12 +5,16 @@ require_once "lib/board.php";
 require_once "lib/game.php";
 require_once "lib/user.php";
 
-
 $method = $_SERVER['REQUEST_METHOD'];
+//Διαχώριση του request ανά /
 $request = explode('/',trim($_SERVER['PATH_INFO'],'/'));
 $input = json_decode(file_get_contents('php://input'),true);
+//Εάν υπάρχει HTTP_X_TOKEN να πάρει τα δεδομένα του
+if(isset($_SERVER['HTTP_X_TOKEN'])) {
+	$input['token']=$_SERVER['HTTP_X_TOKEN'];
+}
 
-//Ολα τα πιθανα requests και αναλογα ποιο είναι, καλεί και την αντίστοιχη function
+//Έλεγχος των requests για την εκτέλεση της ανάλογης ενέργειας
 switch ($r=array_shift($request)){
 	case 'board':
 		switch($b=array_shift($request)){
@@ -18,8 +22,11 @@ switch ($r=array_shift($request)){
 			case null: 
 				handle_board($method);
 				break;
-			case 'piece':
-				handle_piece($method, $request[0],$request[1],$input);
+			case 'show_piece':
+				show_piece($request[0],$request[1]);
+				break;
+			case 'put_piece':
+				put_piece($input['y'],$input['token']);
 				break;
 			default:
 				header("HTTP/1.1 404 Not Found");
@@ -41,7 +48,7 @@ switch ($r=array_shift($request)){
 		exit;
 }
 
-//Βλεπει εάν  η method είναι get ή post
+//Έλεγχος της method (Από το path /board)
 function handle_board($method){
 	if($method=='GET'){
 		show_board();
@@ -51,12 +58,8 @@ function handle_board($method){
 	}
 }
 
-//
-function handle_piece($method, $x,$y,$input) {
-	
-}
 
-//Βλέπει εάν είναι κενή τότε να επιστρέφει να στοιχεία των παιχτών αλλιώς να καλέσει την handle_user
+//Έλεγχος για των pathes  από /players
 function handle_player($method, $request,$input) {
 	switch ($b=array_shift($request)) {
 		case '':
@@ -80,4 +83,5 @@ function handle_player($method, $request,$input) {
             break;
 	}
 }
+
 ?>

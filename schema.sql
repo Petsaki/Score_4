@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 28, 2020 at 11:51 AM
+-- Generation Time: Jan 01, 2021 at 04:29 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.10
 
@@ -23,18 +23,42 @@ SET time_zone = "+00:00";
 
 DELIMITER $$
 --
--- Procedures: Αρχικοποιω την board μέσο της replace με την board_empty
+-- Procedure clean_board: Αρχικοποιω την board μέσο της replace με την board_empty
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_board` ()  BEGIN
 		REPLACE INTO `board` SELECT * FROM `board_empty`;
+        UPDATE `players` SET username=NULL, token=NULL;
+		UPDATE `game_status` SET `status`='not active', `color_turn`=NULL, `result`=NULL;
 	END$$
+
+--
+-- Procedure put_piece: τοποθετώ μία μάρκα σύμφωνα με τα IN στον board και ενημερώνω το last_action και game_status ποιανού σειρά είναι
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `put_piece` (IN `y_input` TINYINT, IN `color_input` VARCHAR(50))  NO SQL
+piece_placed:
+    BEGIN
+        DECLARE x1 INT;
+        SET x1 = 1;
+        REPEAT
+            IF (SELECT color FROM `board` WHERE x=x1 AND y=y_input)IS NULL THEN
+                UPDATE `board`
+                SET color=color_input
+                WHERE x=x1 AND y=y_input;
+                UPDATE players SET last_action=NOW() WHERE color_picked=color_input;
+                UPDATE game_status SET color_turn=IF(color_input='Y','R','Y');
+                LEAVE piece_placed;
+            END IF;
+            SET x1 = x1 + 1;
+            UNTIL x1 > 6
+      END REPEAT;
+END$$
 
 DELIMITER ;
 
 -- --------------------------------------------------------
 
 --
--- Φτιάχνω τον board
+-- Η δομή του πίνακα board
 --
 
 CREATE TABLE `board` (
@@ -44,15 +68,15 @@ CREATE TABLE `board` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `board`
+-- Τα δεδομένα που περιέχει ο board
 --
 
 INSERT INTO `board` (`x`, `y`, `color`) VALUES
-(1, 1, 'R'),
+(1, 1, NULL),
 (1, 2, NULL),
 (1, 3, NULL),
-(1, 4, 'R'),
-(1, 5, 'Y'),
+(1, 4, NULL),
+(1, 5, NULL),
 (1, 6, NULL),
 (1, 7, NULL),
 (2, 1, NULL),
@@ -94,7 +118,7 @@ INSERT INTO `board` (`x`, `y`, `color`) VALUES
 -- --------------------------------------------------------
 
 --
--- Φτιάχνω τον board_empty
+-- Η δομή του πίνακα board_empty
 --
 
 CREATE TABLE `board_empty` (
@@ -104,7 +128,7 @@ CREATE TABLE `board_empty` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Γεμιζω την board_empty με τα αρχικα δεδομενα
+-- Τα δεδομένα που περιέχει ο board_empty
 --
 
 INSERT INTO `board_empty` (`x`, `y`, `color`) VALUES
@@ -154,7 +178,7 @@ INSERT INTO `board_empty` (`x`, `y`, `color`) VALUES
 -- --------------------------------------------------------
 
 --
--- Φτιάχνω τον game_status
+-- Η δομή του πίνακα game_status
 --
 
 CREATE TABLE `game_status` (
@@ -165,14 +189,14 @@ CREATE TABLE `game_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `game_status`
+-- Τα δεδομένα του game_status
 --
 
 INSERT INTO `game_status` (`status`, `color_turn`, `result`, `last_change`) VALUES
-('not active', NULL, NULL, NULL);
+('not active', NULL, NULL, '2021-01-03 14:02:43');
 
 --
--- Triggers: Καθε φορα που γινετε update στην `game_status` βαζει στο last_change την ημερομηνια εκεινης της στιγμης
+-- Triggers `game_status`: Πριν από κάθε update του πίνακα game_status να ενημερώσει την στήλη last_change με την τωρινή ώρα
 --
 DELIMITER $$
 CREATE TRIGGER `game_status_update` BEFORE UPDATE ON `game_status` FOR EACH ROW BEGIN
@@ -184,7 +208,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Φτιάχνω τον πίνακα players
+-- Η δομή του πίνακα players
 --
 
 CREATE TABLE `players` (
@@ -195,31 +219,32 @@ CREATE TABLE `players` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `players`
+-- Τα δεδομένα του players
 --
 
 INSERT INTO `players` (`username`, `color_picked`, `token`, `last_action`) VALUES
-(NULL, 'Y', '', NULL),
-(NULL, 'R', '', NULL);
+(NULL, 'Y', '', '2021-01-03 13:55:59'),
+(NULL, 'R', '', '2021-01-03 13:56:35');
+
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `board`
+-- Τα κύρια κλειδιά του board
 --
 ALTER TABLE `board`
   ADD PRIMARY KEY (`x`,`y`);
 
 --
--- Indexes for table `board_empty`
+-- Τα κύρια κλειδιά του board_empty
 --
 ALTER TABLE `board_empty`
   ADD PRIMARY KEY (`x`,`y`);
 
 --
--- Indexes for table `players`
+-- Τα κύρια κλειδιά του players
 --
 ALTER TABLE `players`
   ADD PRIMARY KEY (`color_picked`);

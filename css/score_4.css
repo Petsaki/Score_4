@@ -1,4 +1,128 @@
-#score_table TD {width: 3em; height:3em;border:1px solid black;text-align:center;}
-#score_table {border-collapse: collapse;}
-TD.Y_cycle {background-color:#F7CA18;}
-TD.R_cycle {background-color:#CF000F;}
+#score_table TD {
+	width: 8rem;
+	height: 7rem;
+ }
+
+TD.Y_cycle {
+	background-color:#F7CA18 !important;
+}
+
+TD.R_cycle {
+	background-color:#CF000F !important;
+}
+
+/*-----------Για να κάνω κύκλους τα td------------*/
+#score_table TD {
+	border-radius: 50%;
+	background-color: #212121;
+}
+
+
+#score_board{
+	background-color:#1b262c;
+	border: 16px solid   #1b262c;
+}
+
+table { 
+	border-spacing: 7px;
+	border-collapse: separate;
+}
+
+td { 
+	border:3px solid rgb(48, 74, 224);
+}
+
+body{
+	background-color:#212121;
+	color: white;
+}
+
+input{
+	color: black !important;
+}
+
+select{
+	color: black;
+}
+
+.hoverin{
+    background-color: rgb(2, 133, 19) !important;
+}
+
+
+/* ----------------LIGHT MODE CSS------------------------*/
+.light-mode {
+	background-color:white;
+	color: black;
+  }
+
+.light-mode #score_table TD{
+	background-color: white;
+}
+
+.light-mode #score_board{
+	background-color: rgb(48, 119, 224);
+	border: 16px solid   rgb(48, 119, 224);
+}
+
+
+
+
+/* ----------------RESPONSIVE------------------------*/
+@media screen and (max-width: 1200px){
+	#score_table TD {
+		width: 10rem;
+		height: 6rem;
+	 }
+
+}
+
+@media screen and (max-width: 992px){
+	#score_table TD {
+		width: 9rem;
+		height: 7.7rem;
+	 }
+	 td { 
+		border:2px solid rgb(48, 74, 224);
+	}
+
+}
+
+@media screen and (max-width: 548px){
+	#score_table TD {
+		width: 8rem;
+		height: 6rem;
+	 }
+
+	 td { 
+		border:2px solid rgb(48, 74, 224);
+	}
+
+}
+
+@media screen and (max-width: 426px){
+	#score_table TD {
+		width: 6rem;
+		height: 4.3rem;
+	 }
+
+	 td { 
+		border:1px solid rgb(48, 74, 224);
+	}
+
+}
+
+@media screen and (max-width: 320px){
+	#score_table TD {
+		width: 1rem;
+		height: 1rem;
+	 }
+
+	 td { 
+		border:1px solid rgb(48, 74, 224);
+	}
+
+}
+
+
+
