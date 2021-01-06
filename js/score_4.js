@@ -7,18 +7,24 @@ var timer=null;
 
 //Ορισμός των click listeners 
 $(function(){
+
 	//Αλλαγή pointer
 	document.getElementById('test').style.cursor = "pointer";
 	document.getElementById('light').style.cursor = "pointer";
 
-	reset_board();
-	draw_empty_board();
-	fill_board();
+
 	$('#login').click(login_to_game);
 	$('#reset_game').click(reset_board);
 	$('#do_move').click(do_move);
 	$('#move_div').hide();
+	$('#reset_game').hide();
 	game_status_update();
+	
+	draw_empty_board();
+	if(game_status.status!='started' && me.token!=null){
+		reset_board();
+		fill_board();
+	}
 });
 
 //click listener για πιο id κουτάκι πατήθηκε
@@ -32,10 +38,10 @@ $(document).on("click", "#score_table td", function(e) {
 
 //Mouse over listener για έγκυρη κίνηση
 $(document).on("mouseenter", "#score_table td", function(e) {
-	if (game_status.status=='started'){
+	if (game_status.status=='started' && game_status.color_turn==me.color_picked){
 		var data = $(this).attr('id');
-		document.getElementById(data).style.cursor = "pointer";
 		var sthlh= document.getElementById(data);
+		sthlh.style.cursor = "pointer";
 		for (var i=1; i<7;i++){
 			var res = data.split("_");
 			var sthlh = res[2];
@@ -105,6 +111,7 @@ function reset_board() {
 	$('#move_div').hide();
 	game_status_update();
 	$('#game_initializer').show(1000);
+	game_status_update();
 }
 
 //Γέμισμα του πίνακα συμφωνα με τα δεδομενα του board
@@ -155,7 +162,7 @@ function game_status_update() {
 	$.ajax({url: "score_4.php/status/", success: update_status ,headers: {"X-Token": me.token}});
 }
 
-//Έλεγχος του status (από το games_status)
+//Έλεγχος του status (από το games_status)----------------------------------------------------------------
 function update_status(data) {
 	last_update=new Date().getTime();
 	var game_stat_old = game_status;
@@ -164,32 +171,54 @@ function update_status(data) {
 	update_info();
 	clearTimeout(timer);
 	
+	if (me.token!=null){
+		$('#reset_game').show();
+	}else{
+		$('#reset_game').hide();
+	}
+	
+	if (game_stat_old.status=='initialized' && game_status.status=='not active' && me.token!=null){
+		alert('No player found. Game reset.');
+		reset_board();
+	}
+	
+	if(game_stat_old.status=='started' && game_status.status=='not active' && me.color_picked!=game_status.color_turn){
+			alert('Enemy player surrendered. Game restarted');
+			reset_board();
+			document.querySelector('#reset_game').innerText = 'Reset';
+			update_info();
+		}
+		
+	if (game_status.status=='started' && me.token!=null){
+		document.querySelector('#reset_game').innerText = 'Surrender';
+		}
+	
+	//-----------------------------------------------------------------------------------------------------------
 	if (game_status.status == 'aborded' && game_stat_old.status != 'aborded') {
 		update_info();
         $('#move_div').hide(2000);
 		opponent_aborded(game_status);
+		after_game_finished();
+		update_info();
 		return;
     } else if (game_status.status == 'ended' && game_stat_old.status != 'ended') {
 		fill_board();
 		update_info();
 		$('#move_div').hide(2000);
 		alert_winner();
-
-			return;
+		after_game_finished();
+		update_info();
+		return;
 	}else if(game_status.color_turn==me.color_picked  &&  me.color_picked!=null) {
+		fill_board();
+		if(game_stat_old.color_turn!=me.color_picked) {
 			fill_board();
-			if(game_stat_old.color_turn!=me.color_picked) {
-				fill_board();
-			}
-			
-			$('#move_div').show(1000);
-			timer= setTimeout(function() { game_status_update();}, 500);
-	}else{
+		}
 
-	if (game_stat_old.status=='started' && game_status.status=='not active' ){
-		alert('A player has left. Game restarted');
-		reset_board();
-	}
+		$('#move_div').show(1000);
+		timer= setTimeout(function() { game_status_update();}, 500);
+	}else{
+	
 		$('#move_div').hide(1000);
 		timer= setTimeout(function() { game_status_update();}, 500);
 	}
@@ -200,24 +229,36 @@ function update_status(data) {
 //Ενημέρωση των παιχτών για το αποτέλεσμα του παιχνίδι
 function alert_winner() {
 	winner = game_status.result;
-	if (winner=='D'){
-		alert('Draw.');
-	}else if (winner=='Y'){
-		alert('Player Yellow has won!');
-	}else{
-		alert('Player Red has won!');
+	if (me.token!=null){
+		if (winner=='D'){
+			alert('Draw.');
+		}else if (winner=='Y'){
+			alert('Player Yellow has won!');
+		}else{
+			alert('Player Red has won!');
+		}
 	}
 }
 
 //Ενημέρωση των παιχτών για aborded
 function opponent_aborded(data){
 	winner= data.result;
-	if (winner=='R'){
-		player='Yellow';
-	}else{
-		player='Red';
-	}
+	if (me.token!=null){
+		if (winner=='R'){
+			player='Yellow';
+		}else{
+			player='Red';
+		}
 	alert('Player '+  player +' has aborded the game.');
+	}
+}
+
+//Αρχικοποίηση του παιχνιδιού και disabled reset button
+function after_game_finished(){
+	document.getElementById('reset_game').disabled = true;
+	setTimeout(function() { reset_board(); }, 1800);
+	setTimeout(function() { document.getElementById('reset_game').disabled = false; }, 1800);
+
 }
 
 //Ενημέρωση παιχτών για τα στοιχεία τους
@@ -238,10 +279,11 @@ function update_info(){
 		color_turn=null;
 	}
 
-	if(game_status.status=='ended' || game_status.status=='aborded'){
-		$('#game_info').html("<h4>Player Status:</h4>You are the: <b>"+color+"</b> player <br/> Name: "+me.username +'<br/> <br/> <h4>Game Status:</h4>Game state: '+game_status.status);
+	if(game_status.status=='started' && me.token!=null){
+		$('#game_info').html("<h4>Player Status:</h4>You are the: <b>"+color+"</b> player <br/> Name: "+me.username +'<br/> <br/> <h4>Game Status:</h4>Game state: '+game_status.status+'<br/> <b>'+ color_turn+'</b> must play now.');
+		
 	}else{
-	$('#game_info').html("<h4>Player Status:</h4>You are the: <b>"+color+"</b> player <br/> Name: "+me.username +'<br/> <br/> <h4>Game Status:</h4>Game state: '+game_status.status+'<br/> <b>'+ color_turn+'</b> must play now.');
+		$('#game_info').html("<h4>Player Status:</h4>You are the: <b>"+color+"</b> player <br/> Name: "+me.username +'<br/> <br/> <h4>Game Status:</h4>Game state: '+game_status.status);
 	}
 }
 

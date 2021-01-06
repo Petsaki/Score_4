@@ -31,8 +31,24 @@ function set_user($input) {
 		print json_encode(['errormesg'=>"No username given."]);
 		exit;
 	}
+
 	$username=$input['username'];
 	$color=$input['color_picked'];
+	global $mysqli;
+
+	//Έλεγχος εάν υπάρχουν ήδη παίχτες που παίζουν.
+	$sql = 'select count(*) as c from players where username is not null';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+	$res = $st->get_result();
+	$r = $res->fetch_all(MYSQLI_ASSOC);
+	if ($r[0]['c']==2){
+		header("HTTP/1.1 400 Bad Request");
+		print json_encode(['errormesg'=>"Other players have started the game already."]);
+		exit;
+	}
+
+	//Έλεγχος εάν υπάρχει ήδη ο παίχτης με το ίδιο χρώμα.
 	global $mysqli;
 	$sql = 'select count(*) as c from players where color_picked=? and username is not null';
 	$st = $mysqli->prepare($sql);
@@ -91,4 +107,11 @@ function current_color($token) {
 	return(null);
 }
 
+//SQL request για να αρχικοποιήσει του παίχτες
+function remove_user(){
+	global $mysqli;
+	$sql = 'update players set username=null, token="", last_action=null where token!="" ';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+}
 ?>

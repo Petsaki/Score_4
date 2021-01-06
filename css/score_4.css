@@ -71,8 +71,8 @@ select{
 /* ----------------RESPONSIVE------------------------*/
 @media screen and (max-width: 1200px){
 	#score_table TD {
-		width: 10rem;
-		height: 6rem;
+		width: 9rem;
+		height: 5.5rem;
 	 }
 
 }
@@ -80,7 +80,7 @@ select{
 @media screen and (max-width: 992px){
 	#score_table TD {
 		width: 9rem;
-		height: 7.7rem;
+		height: 9rem;
 	 }
 	 td { 
 		border:2px solid rgb(48, 74, 224);
@@ -114,8 +114,8 @@ select{
 
 @media screen and (max-width: 320px){
 	#score_table TD {
-		width: 1rem;
-		height: 1rem;
+		width: 4rem;
+		height: 3rem;
 	 }
 
 	 td { 

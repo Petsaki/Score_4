@@ -6,6 +6,8 @@ function show_status() {
 	
 	global $mysqli;
 	
+	check_initialized();
+	
 	check_abort();
 	
 
@@ -25,11 +27,29 @@ function show_status() {
 function check_abort() {
 	global $mysqli;
 
-	$sql = "update game_status set status='aborded', result=if(color_turn='Y','R','Y'),color_turn=null where color_turn is not null and last_change<(now()-INTERVAL 5 MINUTE) and status='started'";
+	$sql = "update game_status set status='aborded', result=if(color_turn='Y','R','Y'),color_turn=null where color_turn is not null and last_change<(now()-INTERVAL 90 SECOND) and status='started'";
 	$st = $mysqli->prepare($sql);
 	$r = $st->execute();
 }
 
+//SQL request για έλεγχο εάν δεν βρήκε αντίπαλο μετα απο το deadline.
+function check_initialized() {
+	global $mysqli;
+	$sql = "select count(*) as npf from game_status WHERE last_change<(now()-INTERVAL 60 SECOND) and status='initialized'";
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+	$res = $st->get_result();
+	$npf = $res->fetch_assoc()['npf'];
+	if ($npf==1){
+
+		$sql2 ="update game_status set status='not active'";
+		$st2 = $mysqli->prepare($sql2);
+		$st2->execute();
+		$res2 = $st2->get_result();
+		remove_user();
+	}
+	
+}
 //SQL request για επιστροφή του πίνακα game_status
 function read_status() {
 	global $mysqli;
@@ -51,13 +71,13 @@ function update_game_status() {
 	$new_status=null;
 	$new_turn=null;
 	
-	$st3=$mysqli->prepare('select count(*) as aborted from players WHERE last_action< (NOW() - INTERVAL 6 MINUTE)');
+	$st3=$mysqli->prepare('select count(*) as aborted from players WHERE last_action< (NOW() - INTERVAL 2 MINUTE)');
 	$st3->execute();
 	$res3 = $st3->get_result();
 	$aborted = $res3->fetch_assoc()['aborted'];
 	if($aborted>0) {
 		if ($status['status']=='started' || $status['status']=='ended'){
-			$sql = "UPDATE players SET username=NULL, token=NULL, last_action =null";
+			$sql = "UPDATE players SET username=NULL, token=NULL, last_action =NULL";
 			$st2 = $mysqli->prepare($sql);
 			$st2->execute();
 		}
